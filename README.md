@@ -51,7 +51,7 @@ You can install the development version of quarrisk from
 ``` r
 
 install.packages("remotes")
-remotes::install_github("ETC5523-2025/assignment-4-packages-and-shiny-apps-parthtendulkar10/bushfire")
+remotes::install_github("ETC5523-2025/assignment-4-packages-and-shiny-apps-parthtendulkar10")
 ```
 
 ## Quick Start
@@ -145,5 +145,7 @@ burned area across years:
 
 ## Documentation
 
+- Package website:
+  <https://etc5523-2025.github.io/assignment-4-packages-and-shiny-apps-parthtendulkar10/>
 - Package repo:
   <https://github.com/ETC5523-2025/assignment-4-packages-and-shiny-apps-parthtendulkar10.git>

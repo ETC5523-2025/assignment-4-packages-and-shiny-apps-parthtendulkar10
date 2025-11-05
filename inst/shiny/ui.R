@@ -7,7 +7,7 @@ dashboardPage(
   skin = "black",
 
   dashboardHeader(
-    title = tags$span("bushfireR", style = "font-weight:700;"),
+    title = tags$span("bushfire", style = "font-weight:700;", style = "color:white"),
     titleWidth = 260
   ),
 
