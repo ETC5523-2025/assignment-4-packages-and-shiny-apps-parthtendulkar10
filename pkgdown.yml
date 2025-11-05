@@ -1,0 +1,7 @@
+pandoc: 3.1.11
+pkgdown: 2.1.3
+pkgdown_sha: ~
+articles:
+  dashboard_guide: dashboard_guide.html
+  intro_bushfire: intro_bushfire.html
+last_built: 2025-11-05T15:07Z
