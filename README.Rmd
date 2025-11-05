@@ -41,7 +41,7 @@ Features:
 
 ## Installation
 
-You can install the development version of quarrisk from [GitHub](https://github.com/) with:
+You can install the development version of bushfire from [GitHub](https://github.com/) with:
 
 ```{r installation-guide, eval=FALSE}
 
