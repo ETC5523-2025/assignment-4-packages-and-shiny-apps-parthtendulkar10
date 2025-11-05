@@ -46,7 +46,7 @@ You can install the development version of quarrisk from [GitHub](https://github
 ```{r installation-guide, eval=FALSE}
 
 install.packages("remotes")
-remotes::install_github("ETC5523-2025/assignment-4-packages-and-shiny-apps-parthtendulkar10/bushfire")
+remotes::install_github("ETC5523-2025/assignment-4-packages-and-shiny-apps-parthtendulkar10")
 
 ```
 
