@@ -28,4 +28,5 @@ Imports:
     plotly,
     DT,
     dplyr,
-    scales
+    scales,
+    tibble
