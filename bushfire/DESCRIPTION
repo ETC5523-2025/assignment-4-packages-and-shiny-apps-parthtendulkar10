@@ -1,24 +1,31 @@
 Package: bushfire
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Bushfire Trends and Climate Correlation Dashboard
 Version: 0.1.0
 Authors@R: c(
     person(
-      "Jane", "Doe",
-      email = "jane@example.com",
+      "Parth", "Tendulkar",
+      email = "parth.tendulkar@example.com",
       role = c("aut", "cre")
     )
   )
-Description: More about what it does (maybe more than one line).
-    Continuation lines should be indented.
+Description: Provides datasets and an interactive Shiny dashboard for exploring
+    bushfire patterns in southeastern Australia from 1997 to 2018. The package
+    combines Fire Weather Index (FWI) data with satellite-derived burned area
+    records to visualize long-term climate–fire relationships, summarize yearly
+    statistics, and calculate correlations between weather and fire intensity.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends: 
     R (>= 3.5)
-RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
 Imports: 
-    bslib,
+    shiny,
+    shinydashboard,
     ggplot2,
-    shiny
+    plotly,
+    DT,
+    dplyr,
+    scales
