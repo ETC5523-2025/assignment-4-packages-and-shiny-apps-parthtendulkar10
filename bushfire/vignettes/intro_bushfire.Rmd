@@ -1,0 +1,280 @@
+---
+title: "Exploring Bushfire Patterns in Australia with bushfireR"
+author: "Parth Tendulkar"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Exploring Bushfire Patterns in Australia with bushfireR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+## Introduction
+
+`bushfire` is a data exploration package that helps analyze **bushfire trends and fire weather conditions** across southeastern Australia between **1997 and 2018**.  
+It combines two primary data sources — the **Fire Weather Index (FWI)** and **burned area** measurements — to study long-term climate–fire relationships.
+
+### What are bushfires?
+
+Bushfires are uncontrolled fires that burn in natural areas such as forests, grasslands, or scrublands. Their intensity and frequency are heavily influenced by **climatic conditions**, including temperature, rainfall, wind speed, and humidity.
+
+### What is the Fire Weather Index (FWI)?
+
+The **Fire Weather Index** is a numerical indicator of fire potential, integrating several meteorological factors:
+- Temperature
+- Wind speed
+- Relative humidity
+- Precipitation
+
+A higher FWI value indicates a greater potential for intense fires.
+
+### What does the package offer?
+
+The package includes:
+- Cleaned and ready-to-use datasets (`bushfire`, `bushfire_summary`, and `pop_est`)
+- Utility functions for summarization and correlation analysis
+- An **interactive Shiny dashboard** (`run_app()`) for dynamic exploration and data download
+
+---
+
+## Installation
+
+You can install the package directly from GitHub:
+
+```{r install, eval=FALSE}
+# Install remotes if not already installed
+install.packages("remotes")
+
+# Install bushfire from GitHub
+remotes::install_github("ETC5523-2025/assignment-4-packages-and-shiny-apps-parthtendulkar10/bushfire")
+```
+
+---
+
+## Loading the Package
+
+```{r load-packages}
+library(bushfire)
+library(dplyr)
+library(ggplot2)
+```
+
+---
+
+## Package Datasets
+
+### 1. Monthly Bushfire Records — `bushfire`
+
+This dataset contains monthly measurements of **Fire Weather Index (FWI)** and **burned area (in km²)** from 1997 to 2018.
+
+```{r data-monthly}
+data(bushfire)
+glimpse(bushfire)
+head(bushfire)
+```
+
+**Key variables:**
+- `year`: Observation year (1997–2018)  
+- `month`: Numeric month indicator (1–12)  
+- `fwi`: Fire Weather Index value (numeric)  
+- `burned_area_km2`: Total burned area in km²  
+
+---
+
+### 2. Yearly Summary — `bushfire_summary`
+
+This dataset aggregates the monthly data to provide **yearly averages of FWI** and **total burned area**.
+
+```{r data-yearly}
+data(bushfire_summary)
+glimpse(bushfire_summary)
+head(bushfire_summary)
+```
+
+**Key variables:**
+- `year`: Observation year  
+- `mean_fwi`: Average Fire Weather Index for the year  
+- `total_burned_km2`: Total area burned across all months  
+
+---
+
+### 3. Population Reference Table — `pop_est`
+
+A small reference dataset used in the dashboard.
+
+```{r data-pop}
+data(pop_est)
+pop_est
+```
+
+---
+
+## Quick Start — Launching the Dashboard
+
+`bushfireR` includes a Shiny dashboard that allows interactive exploration of trends and correlations.  
+You can launch it using:
+
+```{r run-app, eval=FALSE}
+run_app()
+```
+
+The dashboard includes two main tabs:
+1. **Overview** – View value boxes summarizing total records, FWI averages, and total burned area, along with a yearly trend chart and summary table.
+2. **Correlation** – Examine how FWI relates to burned area over time, with an overall correlation value, yearly correlation trend, and download options.
+
+---
+
+## Basic Data Exploration
+
+### View top records
+```{r basic-head}
+head(bushfire)
+```
+
+### Check data range
+```{r basic-summary}
+summary(bushfire)
+```
+
+### Count number of years
+```{r basic-years}
+length(unique(bushfire$year))
+```
+
+---
+
+## Exploratory Analysis
+
+### 1. Annual Fire Trends
+
+Visualize how burned area and FWI vary over time:
+
+```{r exp-trend}
+ggplot(bushfire_summary, aes(x = year)) +
+  geom_col(aes(y = total_burned_km2), fill = "#e34a33", alpha = 0.85) +
+  geom_line(aes(y = mean_fwi * 1000), color = "#3182bd", linewidth = 1.1) +
+  scale_y_continuous(
+    name = "Total Burned Area (km²)",
+    sec.axis = sec_axis(~ . / 1000, name = "Mean FWI")
+  ) +
+  labs(
+    title = "Bushfire Activity in Southeastern Australia (1997–2018)",
+    x = "Year"
+  ) +
+  theme_minimal()
+```
+
+---
+
+### 2. Calculate and Visualize Correlation
+
+```{r exp-corr}
+yearly_corr <- bushfire |>
+  group_by(year) |>
+  summarise(corr = cor(fwi, burned_area_km2, use = "complete.obs"), .groups = "drop")
+
+ggplot(yearly_corr, aes(x = year, y = corr)) +
+  geom_hline(yintercept = 0, linetype = 3, colour = "grey60") +
+  geom_line(linewidth = 1.1, colour = "#1b9e77") +
+  geom_point(size = 2.5, colour = "#1b9e77") +
+  scale_y_continuous(limits = c(-1, 1)) +
+  labs(title = "Yearly Correlation Between FWI and Burned Area",
+       x = "Year", y = "Pearson Correlation") +
+  theme_minimal()
+```
+
+---
+
+### 3. Identify Extreme Years
+
+Find years with the highest FWI and largest burned area:
+
+```{r exp-top}
+top_burned <- bushfire_summary |> arrange(desc(total_burned_km2)) |> head(5)
+top_fwi <- bushfire_summary |> arrange(desc(mean_fwi)) |> head(5)
+
+top_burned
+top_fwi
+```
+
+---
+
+### 4. Derived Indicator — Fire Intensity Index
+
+Create a simple ratio of FWI to burned area to identify unusually intense conditions.
+
+```{r exp-index}
+bushfire_summary |>
+  mutate(intensity_index = mean_fwi / pmax(total_burned_km2, 1)) |>
+  arrange(desc(intensity_index)) |>
+  head(5)
+```
+
+---
+
+## Example Analysis — Combined Exploration
+
+Combine multiple metrics to observe long-term patterns:
+
+```{r combined-exp}
+combined <- bushfire_summary |>
+  mutate(
+    intensity_index = mean_fwi / pmax(total_burned_km2, 1),
+    scaled_fwi = scale(mean_fwi),
+    scaled_area = scale(total_burned_km2)
+  )
+
+ggplot(combined, aes(x = year)) +
+  geom_line(aes(y = scaled_fwi), colour = "#3182bd", linewidth = 1.2) +
+  geom_line(aes(y = scaled_area), colour = "#e34a33", linewidth = 1.2, linetype = 2) +
+  labs(
+    title = "Standardized Fire Weather Index vs Burned Area",
+    x = "Year", y = "Scaled Values"
+  ) +
+  theme_minimal()
+```
+
+---
+
+## Best Practices
+
+1. **Always check data consistency** – Fire data often contain gaps or outliers due to satellite coverage and reporting errors.
+2. **Analyze relative changes** – Comparing percentage changes year-over-year gives better context than absolute numbers.  
+3. **Consider weather context** – High FWI doesn’t always lead to more fires; ignition sources and vegetation play roles too.  
+4. **Use correlations descriptively** – Correlation shows association, not causation.  
+5. **Leverage the dashboard** – It provides quick summaries and export options for reproducible analysis.
+
+---
+
+## Next Steps
+
+- Launch the app with `run_app()` to explore interactively.  
+- Use `?bushfire_summary` and `?bushfire` for dataset documentation.  
+- Integrate this data into broader environmental or climate studies.  
+
+---
+
+## References
+
+- Van Wagner, C.E. (1987). *Development and Structure of the Canadian Forest Fire Weather Index System*. Forestry Technical Report 35.  
+- Australian Bureau of Meteorology (BoM). *Fire Weather Services and Index Methodology.*  
+- ERA5 Climate Reanalysis Data (1997–2018). European Centre for Medium-Range Weather Forecasts (ECMWF).
+
+---
+
+## Getting Help
+
+- Package documentation: `?bushfire`  
+- Launch dashboard: `run_app()`  
+- Report issues or contribute: GitHub Issues page  

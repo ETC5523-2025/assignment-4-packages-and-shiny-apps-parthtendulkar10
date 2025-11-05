@@ -1,0 +1,257 @@
+---
+title: "Dashboard User Guide"
+author: "Parth Tendulkar"
+date: "6 November 2025"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Dashboard User Guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+## Introduction
+
+The `bushfire` interactive dashboard provides a comprehensive interface for exploring bushfire activity in southeastern Australia (1997–2018). This guide walks you through each feature of the dashboard and explains how to interpret the visualizations.
+
+## Dashboard Overview
+
+The dashboard consists of two main tabs accessible from the left sidebar:
+
+1. **Overview** — Yearly trends of burned area and mean Fire Weather Index (FWI), with filters, table, and downloads  
+2. **Correlation** — Yearly Pearson correlation between monthly FWI and monthly burned area, with filters, table, and downloads
+
+Each tab is self-contained with its own controls, visualizations, and interpretation guides.
+
+---
+
+## Tab 1: Overview
+
+### Purpose
+
+The Overview tab presents yearly summaries compiled from monthly observations, showing:
+
+- How total burned area (km²) changes over time
+- How mean FWI evolves across years
+- Side-by-side review using a combined bar (burned area) + line (FWI) plot
+
+### Key Features
+
+#### Value Boxes
+
+Three summary statistics provide a quick overview:
+
+- **Total Monthly Records**: Number of monthly observations in the dataset
+- **Average Fire Weather Index**: Mean FWI across all months
+- **Total Burned Area (km²)**: Sum of burned area across all months
+
+These boxes give you an at-a-glance understanding of dataset size, typical conditions, and overall impact.
+
+#### Information Box (About Data)
+
+A collapsible information panel explains key concepts:
+
+- **FWI (Fire Weather Index)**: Composite indicator combining wind, humidity, temperature, and rainfall. Higher values indicate conditions more conducive to fire ignition and spread.
+- **Burned Area (km²)**: Total land area affected by bushfires.
+- **Plot interpretation**: Bars represent annual burned area; the blue line represents mean FWI on a secondary axis.
+
+#### Interactive Trend Visualization (Bar + Line)
+
+The main feature is a combined plot showing yearly **total burned area** (bars, primary y-axis) and **mean FWI** (line, secondary y-axis):
+
+**How to interact:**
+
+- **Hover**: See exact values per year
+- **Zoom/Pan**: Use plotly toolbar controls
+- **Reset**: Click the home icon to return to full view
+
+**Scaling note:**
+
+- The line uses an internal scaling (e.g., multiplying mean FWI by 1000) so it can be shown alongside burned area while FWI remains interpretable via the **secondary axis**.
+
+**What to look for:**
+
+- **Peaks**: Identify years with unusually high burned area
+- **Co-movement**: Check if years with higher mean FWI align with larger burned area
+- **Period focus**: Use the year slider to examine specific windows (e.g., early vs later years)
+
+#### Filter Panel
+
+- **Year Range**: Adjust the slider to focus on years of interest.  
+  Minimum and maximum values are set from the data and update automatically if the dataset changes.
+
+#### Yearly Summary Table
+
+A clean, paginated table lists yearly totals and means used in the plot:
+
+- Sort columns by clicking headers
+- Scan values to corroborate visual trends
+- Default pagination shows 10 rows for readability
+
+#### Download Data
+
+Convenient CSV downloads for reproducible analysis:
+
+- **Monthly CSV** — Full monthly dataset used by the dashboard
+- **Yearly Summary CSV** — Yearly totals and means
+- **Population CSV** — Reference population table included for context
+
+Filenames include the current date for versioning and traceability.
+
+### Interpretation Tips
+
+1. **FWI vs activity**: Higher FWI often aligns with larger burned area, but other factors (ignitions, suppression, fuel) also matter.  
+2. **Outliers**: Extremely high burned area years may reflect large events; cross-check with external records if needed.  
+3. **Trend shifts**: Multi-year patterns can reflect climatic variability or operational changes (e.g., management, reporting).
+
+---
+
+## Tab 2: Correlation
+
+### Purpose
+
+This tab explores how closely monthly **FWI** and **burned area** move together **within each year**, using **Pearson correlation**:
+
+- For each year, correlation is computed across that year’s monthly observations
+- The result is a time series of yearly correlation values (r)
+
+### Key Features
+
+#### Summary Value Box
+
+- **Overall Correlation (FWI vs Burned Area)**: Pearson r computed using all monthly observations across all years.  
+  - **+1** strong positive, **0** none, **−1** strong negative
+
+Use this to gauge the aggregate relationship before drilling into year-level detail.
+
+#### Interactive Correlation Plot
+
+A line chart with points displays **yearly r** values on the y-axis (bounded −1 to 1):
+
+**How to interact:**
+
+- **Hover**: View the year and corresponding correlation value
+- **Zoom/Pan**: Use plotly toolbar
+- **Reset**: Click home icon
+
+**What to look for:**
+
+1. **Consistency**: Are correlations mostly positive (or negative) across the period?  
+2. **Strength**: Which years show notably strong or weak relationships?  
+3. **Regime changes**: Sudden flips or trends may indicate changes in climate, fuels, or data coverage.
+
+#### Filter Panel
+
+- **Year Range**: A dedicated slider lets you narrow the subset of years used in the plot and correlation download.
+
+#### Supporting Table & Download
+
+- **Population Summary**: A companion table providing contextual population estimates (no paging).  
+- **Download Correlation Data**: Export the per-year correlation series as CSV (filename includes the current date).
+
+### Interpretation Tips
+
+- **Correlation ≠ causation**: Alignment between weather index and burned area supports—but doesn’t prove—weather-driven dynamics.  
+- **Sample size & missingness**: Years with fewer valid monthly pairs can yield more volatile r values.  
+- **Outlier months**: Single extreme months can influence yearly correlation; consider inspecting raw monthly data when needed.
+
+---
+
+## General Dashboard Features
+
+### Navigation
+
+- **Sidebar menu**: Click **Overview** or **Correlation** to switch tabs
+- **Active tab**: Highlighted in the sidebar for orientation
+- **Collapsible boxes**: Use titles to expand/collapse information panels
+
+### Interactivity
+
+All visualizations are interactive:
+
+- **Hover** for details
+- **Zoom/Pan/Reset** via plotly toolbar
+- **Tables**: Sort columns for quick comparisons
+
+### Performance Tips
+
+For the best experience:
+
+1. **Use modern browsers**: Chrome, Firefox, Safari, or Edge  
+2. **Close unused tabs**: Reduces memory usage  
+3. **Narrow filters**: Limit the year range on the Correlation tab if rendering is slow on modest hardware
+
+---
+
+## Common Questions
+
+### Why do some correlations vary widely year to year?
+
+- Differences in ignition sources, suppression, fuel conditions, or climate drivers
+- Smaller numbers of valid monthly pairs in some years
+- Influence of extreme months
+
+### What does the secondary axis on the Overview plot represent?
+
+The **right-hand axis** is the original **FWI** scale. Internally, the line is scaled for visualization, but interpretation should be based on the secondary axis labels.
+
+### Can I export the data?
+
+Yes. Use the **Download** buttons to export:
+
+- Monthly data (`bushfire`)
+- Yearly summary (`bushfire_summary`)
+- Population table (`pop_est`)
+- Yearly correlations (computed by the app)
+
+---
+
+## Best Practices for Dashboard Use
+
+### 1. Start Broad, Then Narrow
+
+- Begin with **Overview** for context
+- Use the **Correlation** tab to examine alignment between weather and burned area
+
+### 2. Consider Multiple Drivers
+
+- Weather (FWI) is important, but ignition sources, fuel loads, and suppression strategies also shape outcomes
+
+### 3. Watch the Scales
+
+- Burned area is shown on the **left y-axis (km²)**
+- FWI appears on the **right y-axis** with a scaled line
+
+### 4. Validate Insights
+
+- Cross-check peaks and correlation changes against known event years or external datasets
+
+### 5. Document & Export
+
+- Note interesting periods
+- Export CSVs for reproducibility and deeper analysis
+
+---
+
+## Glossary (Quick Reference)
+
+- **FWI (Fire Weather Index)**: Composite index of fire danger conditions (wind, humidity, temperature, rainfall).  
+- **Burned Area (km²)**: Total area affected by bushfires.  
+- **Pearson Correlation (r)**: Measure of linear association (−1 to +1).  
+- **DALYs/YLL/YLD**: *Not used in this dashboard* — terms from population health metrics (included here only for users familiar with such indicators).
+
+---
+
+## Session Info
+
+```{r session-info}
+sessionInfo()
+```

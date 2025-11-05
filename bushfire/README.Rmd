@@ -2,8 +2,6 @@
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -16,40 +14,115 @@ knitr::opts_chunk$set(
 # bushfire
 
 <!-- badges: start -->
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 <!-- badges: end -->
 
-The goal of bushfire is to ...
+## Overview
+
+**bushfire** provides an interactive Shiny dashboard and helper functions to explore bushfire trends and climate correlations in southeastern Australia between 1997 and 2018.
+
+It includes three clean datasets:
+
+-   **bushfire**         — monthly Fire Weather Index (FWI) and burned area records
+-   **bushfire_summary** — yearly summaries of total burned area and mean FWI
+-   **pop_est**          — simplified population reference data used in the dashboard.
+
+The dashboard features two main sections: **Overview** and **Correlation Analysis**, allowing users to explore long-term climate–fire relationships, visualize annual FWI and burned area trends, and measure correlations between fire intensity and weather indicators.
+
+Features:
+
+-   🔥 **Three curated datasets** combining Fire Weather Index (FWI) and burned area data
+-   🌏 **Overview:** yearly summaries showing total burned area and mean fire intensity
+-   📊 **Correlation Analysis:** explore relationships between FWI and burned area across years
+-   📈 **Interactive Visuals:** time-series plots, correlation trends, and summary tables
+-   🧰 **Helper functions:** summarise_bushfire() to create yearly summaries, correlate_bushfire() to compute FWI–burned area correlations
+-   💾 **Data download** option built into the dashboard
+-   🖥️ One-line app launcher: run_app()
 
 ## Installation
 
-You can install the development version of bushfire from [GitHub](https://github.com/) with:
+You can install the development version of quarrisk from [GitHub](https://github.com/) with:
 
-``` r
-# install.packages("pak")
-pak::pak("ETC5523-2025/assignment-4-packages-and-shiny-apps-parthtendulkar10")
+```{r installation-guide, eval=FALSE}
+
+install.packages("remotes")
+remotes::install_github("ETC5523-2025/assignment-4-packages-and-shiny-apps-parthtendulkar10/bushfire")
+
 ```
 
-## Example
+## Quick Start
 
-This is a basic example which shows you how to solve a common problem:
+```{r load libraries}
 
-```{r example}
 library(bushfire)
-## basic example code
+
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+## Explore the datasets
 
-```{r cars}
-summary(cars)
+```{r example, eval=FALSE}
+
+data(bushfire)
+head(bushfire)
+data(bushfire_summary)
+head(bushfire_summary)
+data(pop_est)
+dplyr::glimpse(pop_est)
+
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
+### Launch interactive dashboard
 
-You can also embed plots, for example:
+```{r launch-run-app, eval=FALSE}
 
-```{r pressure, echo = FALSE}
-plot(pressure)
+run_app()
+
 ```
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
+## Dashboard Views
+
+- **Overview** – Displays yearly summaries of total burned area and average Fire Weather Index (FWI)  
+  from 1997–2018, alongside key metrics in value boxes.
+
+- **Correlation Analysis**  -
+  - **Trend Plot:** visualizes yearly changes in burned area (bars) and mean FWI (line)  
+  - **Correlation Plot:** shows how closely FWI aligns with burned area across years.
+
+- **Download Section** – Allows users to export processed bushfire data for further analysis.
+
+## Example Analysis
+
+Compute the gap between traveller and worker outbreak probabilities for a given scenario grid:
+
+## Example Analysis
+
+Compute the relationship between Fire Weather Index (FWI) and total burned area across years:
+
+```{r example-analysis, echo=FALSE}
+
+library(dplyr)
+
+bushfire_summary |>
+  mutate(fwi_to_burn_ratio = mean_fwi / total_burned_km2) |>
+  arrange(desc(fwi_to_burn_ratio)) |>
+  select(year, mean_fwi, total_burned_km2, fwi_to_burn_ratio) |>
+  head()
+
+```
+
+## Available Datasets
+
+- `bushfire` — Tibble with columns: `year`, `month`, `fwi`, `burned_area_km2`. Contains monthly Fire Weather Index (FWI) and burned area data from 1997–2018.
+- `bushfire_summary` — Tibble with columns: `year`, `mean_fwi`, `total_burned_km2`. Summarized yearly averages and totals for trend and correlation analysis.
+- `pop_est` — Small reference tibble with population-level observation counts used in correlation and distribution summaries.
+
+## Functions
+
+- `run_app()` — Launches the interactive bushfire dashboard.
+- `summarise_bushfire()` — Produces yearly summaries of total burned area and average FWI from the combined monthly dataset.
+- `correlate_bushfire()` — Calculates correlations between Fire Weather Index (FWI) and burned area across years.
+
+
+## Documentation
+
+- Package repo: <https://github.com/ETC5523-2025/assignment-4-packages-and-shiny-apps-parthtendulkar10.git>  
